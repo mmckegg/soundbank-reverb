@@ -4,7 +4,7 @@
   "description": "Simple Web Audio API based reverb effect.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape test/*.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/mmckegg/soundbank-reverb/issues"
   },
-  "homepage": "https://github.com/mmckegg/soundbank-reverb"
+  "homepage": "https://github.com/mmckegg/soundbank-reverb",
+  "devDependencies": {
+    "tape": "^3.4.0"
+  }
 }

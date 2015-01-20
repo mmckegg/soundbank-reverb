@@ -1,5 +1,7 @@
 // based on https://github.com/web-audio-components/simple-reverb by Nick Thompson
 
+var buildImpulse = require('./build-impulse')
+
 module.exports = SimpleReverb
 
 function SimpleReverb(context){
@@ -20,7 +22,6 @@ function SimpleReverb(context){
   wet.connect(convolver)
   filter.connect(output)
 
-  node._context = context;
 
   Object.defineProperties(node, properties)
 
@@ -31,7 +32,10 @@ function SimpleReverb(context){
   node.cutoff.value = 20000
   node.filterType = 'lowpass'
 
+  this._building = false
   node._buildImpulse()
+
+
   return node
 }
 
@@ -78,21 +82,21 @@ var properties = {
 
   _buildImpulse: {
     value: function () {
-      var rate = this._context.sampleRate
-        , length = rate * this.time
-        , decay = this.decay
-        , impulse = this._context.createBuffer(2, length, rate)
-        , impulseL = impulse.getChannelData(0)
-        , impulseR = impulse.getChannelData(1)
-        , n, i;
+      var self = this
+      var rate = self.context.sampleRate
+      var length = Math.max(rate * self.time, 1)
 
-      for (i = 0; i < length; i++) {
-        n = this.reverse ? length - i : i;
-        impulseL[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
-        impulseR[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
+      if (self._building){
+        buildImpulse.cancel(self._building)
       }
 
-      this._convolver.buffer = impulse;
+      self._building = buildImpulse(length, self.decay, self.reverse, function(channels){
+        var impulse = self.context.createBuffer(2, length, rate)
+        impulse.getChannelData(0).set(channels[0])
+        impulse.getChannelData(1).set(channels[1])
+        self._convolver.buffer = impulse
+        self._building = false
+      })
     }
   },
 
@@ -128,3 +132,4 @@ var properties = {
   }
 
 }
+
