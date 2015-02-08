@@ -32,7 +32,7 @@ function SimpleReverb(context){
   node.cutoff.value = 20000
   node.filterType = 'lowpass'
 
-  this._building = false
+  node._building = false
   node._buildImpulse()
 
 
@@ -87,7 +87,7 @@ var properties = {
       var length = Math.max(rate * self.time, 1)
 
       if (self._building){
-        buildImpulse.cancel(self._building)
+        console.log(buildImpulse.cancel(self._building))
       }
 
       self._building = buildImpulse(length, self.decay, self.reverse, function(channels){

@@ -5,9 +5,10 @@ var chunkSize = 2048
 var queue = []
 var targets = {}
 
-var lastImpulseId = 1
+var lastImpulseId = 0
 function buildImpulse(length, decay, reverse, cb){
-
+  
+  lastImpulseId += 1
   var target = targets[lastImpulseId] = {
     id: lastImpulseId,
     cb: cb,
@@ -19,13 +20,13 @@ function buildImpulse(length, decay, reverse, cb){
   }
 
   queue.push([ target.id, 0, Math.min(chunkSize, length) ])
-  lastImpulseId += 1
 
   setTimeout(next, 1)
+  return lastImpulseId
 }
 
 buildImpulse.cancel = function(id){
-  if (target[id]){
+  if (targets[id]){
     ;delete targets[id]
     return true
   } else {
