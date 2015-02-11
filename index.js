@@ -87,7 +87,7 @@ var properties = {
       var length = Math.max(rate * self.time, 1)
 
       if (self._building){
-        console.log(buildImpulse.cancel(self._building))
+        buildImpulse.cancel(self._building)
       }
 
       self._building = buildImpulse(length, self.decay, self.reverse, function(channels){
